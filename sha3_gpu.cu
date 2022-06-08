@@ -145,7 +145,7 @@ int main() {
  
     int deviceCount = 0;
     cudaError_t error_id = cudaGetDeviceCount(&deviceCount);
- printf("do i come here?\n");
+  printf("do i come here?\n");
     if (error_id != cudaSuccess){
        printf("Error: %s\n", cudaGetErrorString(error_id));
        printf("Exiting...\n");
