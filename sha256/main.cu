@@ -48,7 +48,6 @@ char* trim(char *str){
 }
 
 __global__ void sha256_cuda(JOB ** jobs, int n) {
-//printf("sha256_cuda\n");
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	// perform sha256 calculation here
 	if (i < n) {
@@ -60,14 +59,12 @@ __global__ void sha256_cuda(JOB ** jobs, int n) {
 }
 
 void pre_sha256() {
-//printf("pre_sha256()\n");
 	// copy symbols
 	checkCudaErrors(cudaMemcpyToSymbol(dev_k, host_k, sizeof(host_k), 0, cudaMemcpyHostToDevice));
 }
 
 
 void runJobs(JOB** jobs, int n) {
-//printf("runJobs\n");
 	int blockSize = 4;
 	int numBlocks = (n + blockSize - 1) / blockSize;
 	sha256_cuda <<< numBlocks, blockSize >>> (jobs, n);
@@ -89,7 +86,6 @@ JOB* JOB_init(BYTE * data, long size, char * fname) {
 
 
 BYTE* get_file_data(char * fname, unsigned long * size) {
-//printf("get_file_data\n");
 	FILE* f = 0;
 	BYTE* buffer = 0;
 	unsigned long fsize = 0;
@@ -116,13 +112,13 @@ BYTE* get_file_data(char * fname, unsigned long * size) {
 	unsigned long numbytes;
         fseek(f, 0L, SEEK_END);
         numbytes = ftell(f);
-        printf("size of file: %lu\n", numbytes);
+        printf("size of file: %lu bytes\n", numbytes);
 	
 	fclose(f);
 	*size = fsize;
 	return buffer;
 }
-
+/*
 void print_usage(){
 	printf("Usage: CudaSHA256 [OPTION] [FILE]...\n");
 	printf("Calculate sha256 hash of given FILEs\n\n");
@@ -135,7 +131,7 @@ void print_usage(){
 	printf("\nNotes:\n");
 	printf("Calculations are performed on GPU, each seperate file is hashed in its own thread\n");
 }
-
+*/
 int main(int argc, char **argv) {
 	int i = 0, n = 0;
 	unsigned long temp;
@@ -164,8 +160,6 @@ int main(int argc, char **argv) {
 	cudaDeviceReset();
 
         end = clock();
-//        printf("start: %d; end: %d\n", start, end);
-        printf("CLOCKS_PER_SEC: %d\n", CLOCKS_PER_SEC);
-        printf("time used: %f\n",  (double)(end - start) / CLOCKS_PER_SEC);               
+        printf("time used: %fs\n",  (double)(end - start) / CLOCKS_PER_SEC);               
 	return 0;
 }
